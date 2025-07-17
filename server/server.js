@@ -2,6 +2,7 @@ const express = require("express")
 const http = require("http")
 const socketIo = require("socket.io")
 const cors = require("cors")
+const path = require("path")
 
 const app = express()
 const server = http.createServer(app)
@@ -14,6 +15,16 @@ const io = socketIo(server, {
 
 app.use(cors())
 app.use(express.json())
+
+console.log(__dirname);
+
+const distPath = path.join(__dirname, "../dist");
+app.use(express.static(distPath));
+
+// SPA fallback: for React Router etc.
+app.get("", (req, res) => {
+  res.sendFile(path.join(distPath, "index.html"));
+});
 
 // Data storage
 let currentPoll = null
